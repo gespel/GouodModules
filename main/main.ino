@@ -70,8 +70,6 @@ void loop() {
       ss->setFrequency(steps*55.f);
       ss2->setFrequency(steps*110.f);
       ss3->setFrequency(steps*112.f);
-      //ss->setFrequency(ss2->getSample() / 5000 * 440.f);
-      //Serial.println((String)step->getSample());
     }
     
     i2s_write((i2s_port_t)i2sChannel, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);
