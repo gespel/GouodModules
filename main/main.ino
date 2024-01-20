@@ -1,3 +1,4 @@
+#pragma once
 #include <Vector.h>
 
 #include <Arduino.h>
@@ -6,6 +7,7 @@
 #include "synths.h"
 #include "StepSequencer.h"
 #include "Misc.h"
+#include "Instruments.h"
 
 const int BUFSIZE = 1024;
 
@@ -16,13 +18,16 @@ float phase = 0;
 uint16_t audioBuffer[BUFSIZE];
 StatusLed *sled;
 SawtoothSynth *base;
-SawtoothSynth *ss;
-SawtoothSynth *ss2;
-SawtoothSynth *ss3;
+SawtoothSynth ss(110, sampleRate);
+//SawtoothSynth *ss2;
+//SawtoothSynth *ss3;
 StepSequencer *step;
+GKick gk(1, 110.f, sampleRate);
+GKick kick(0, 82.5f, sampleRate);
 float arr[8];
 Vector<float> x(arr);
 int i = 0;
+float steps = 1;
 
 
 void setup() {
@@ -31,17 +36,13 @@ void setup() {
     x.push_back(2.0);
     x.push_back(3.0);
     x.push_back(4.0);
-    x.push_back(5.0);
-    x.push_back(6.0);
-    x.push_back(7.0);
-    x.push_back(8.0);
+
     
     step = new StepSequencer(sampleRate, x);
     step->setSpeed(0.5);
     base = new SawtoothSynth(54.0f, sampleRate);
-    ss = new SawtoothSynth(110.0f, sampleRate);
-    ss2 = new SawtoothSynth(110.f, sampleRate);
-    ss3 = new SawtoothSynth(110.f, sampleRate);
+    //ss2 = new SawtoothSynth(110.f, sampleRate);
+    //ss3 = new SawtoothSynth(110.f, sampleRate);
     Serial.begin(19200);
     pinMode(17, OUTPUT);
     pinMode(18, INPUT);
@@ -51,11 +52,22 @@ void setup() {
 
 void loop() {
     i++;
-    if(i % 16 == 0) {
+    if(i % 4 == 0) {
         sled->toggle();
+        int rt = random(3);
+        int rf = random(20);
+        if(rt == 1) {
+          gk.setFrequency(rf*110);
+          gk.trigger();
+        }
+        
+    }
+    if(i % 8 == 0) {
+        kick.trigger();
+        gk.setType(random(2));
+        steps = step->getSample();
         i = 0;
     }
-    // Erzeugen Sie einen Sinus-Ton und geben Sie ihn über I2S aus
     
     int16_t sample;
     size_t bytes_written;
@@ -63,13 +75,14 @@ void loop() {
     int x = 0;
 
     for (int i = 0; i < BUFSIZE; i++) {
-      float sample = (base->getSample() + ss->getSample() + ss2->getSample() + ss3->getSample()) / 4;
+      //float sample = (base->getSample() + ss->getSample() + ss2->getSample() + ss3->getSample()) / 4;
+      float sample = gk.getSample() /*+ kick.getSample()*//* + ss.getSample()*0.1*/;
       audioBuffer[i] = sample;
 
-      float steps = step->getRandomSample();
-      ss->setFrequency(steps*55.f);
-      ss2->setFrequency(steps*110.f);
-      ss3->setFrequency(steps*112.f);
+      ss.setFrequency(steps*55.f);
+      //ss2->setFrequency(steps*110.f);
+      //ss3->setFrequency(steps*112.f);
+      step->randomTick();
     }
     
     i2s_write((i2s_port_t)i2sChannel, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);

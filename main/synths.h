@@ -1,3 +1,5 @@
+#pragma once
+
 class SineSynth {
 public:
   SineSynth(double freq, double sampleRate);

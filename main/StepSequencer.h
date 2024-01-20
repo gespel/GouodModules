@@ -5,6 +5,7 @@ public:
     void setSpeed(float speed);
     float getSample();
     float getRandomSample();
+    void randomTick();
 
 private:
     float sampleRate;
@@ -48,11 +49,14 @@ float StepSequencer::getSample() {
     return this->seq.at(counter);
 }
 
-float StepSequencer::getRandomSample() {
-    if (this->i > this->numPerStep) {
+void StepSequencer::randomTick() {
+  if (this->i > this->numPerStep) {
         this->randomCounter = random(this->seq.size());
         this->i = 0;
     }
     this->i++;
+}
+
+float StepSequencer::getRandomSample() {
     return this->seq[this->randomCounter];
 }
