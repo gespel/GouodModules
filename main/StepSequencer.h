@@ -4,6 +4,7 @@ public:
     void setSequence(Vector<float> seq);
     void setSpeed(float speed);
     float getSample();
+    float getRandomSample();
 
 private:
     float sampleRate;
@@ -45,4 +46,13 @@ float StepSequencer::getSample() {
     }
     this->i++;
     return this->seq.at(counter);
+}
+
+float StepSequencer::getRandomSample() {
+    if (this->i > this->numPerStep) {
+        this->randomCounter = random(this->seq.size());
+        this->i = 0;
+    }
+    this->i++;
+    return this->seq[this->randomCounter];
 }

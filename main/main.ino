@@ -15,6 +15,7 @@ const int i2sChannel = 0; // I2S-Kanal (0 oder 1, je nach ESP32-Modell)
 float phase = 0;
 uint16_t audioBuffer[BUFSIZE];
 StatusLed *sled;
+SawtoothSynth *base;
 SawtoothSynth *ss;
 SawtoothSynth *ss2;
 SawtoothSynth *ss3;
@@ -37,6 +38,7 @@ void setup() {
     
     step = new StepSequencer(sampleRate, x);
     step->setSpeed(0.5);
+    base = new SawtoothSynth(54.0f, sampleRate);
     ss = new SawtoothSynth(110.0f, sampleRate);
     ss2 = new SawtoothSynth(110.f, sampleRate);
     ss3 = new SawtoothSynth(110.f, sampleRate);
@@ -49,7 +51,7 @@ void setup() {
 
 void loop() {
     i++;
-    if(i % 20 == 0) {
+    if(i % 16 == 0) {
         sled->toggle();
         i = 0;
     }
@@ -61,10 +63,10 @@ void loop() {
     int x = 0;
 
     for (int i = 0; i < BUFSIZE; i++) {
-      float sample = (ss->getSample() + ss2->getSample() + ss3->getSample()) / 3;
-      //audioBuffer[i] = sample;
+      float sample = (base->getSample() + ss->getSample() + ss2->getSample() + ss3->getSample()) / 4;
+      audioBuffer[i] = sample;
 
-      float steps = step->getSample();
+      float steps = step->getRandomSample();
       ss->setFrequency(steps*55.f);
       ss2->setFrequency(steps*110.f);
       ss3->setFrequency(steps*112.f);
