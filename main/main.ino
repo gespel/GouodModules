@@ -71,8 +71,12 @@ void loop() {
         kick.trigger();
         gk.setType(random(2));
         steps = step->getSample();
-        i = 0;
         
+    }
+    if(i % 16 == 0) {
+      i = 0;
+      ph.printDebug();
+
     }
     
     int16_t sample;
@@ -92,11 +96,8 @@ void loop() {
       //ss2->setFrequency(steps*110.f);
       //ss3->setFrequency(steps*112.f);
       step->randomTick();
+      
     }
     
     i2s_write((i2s_port_t)i2sChannel, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);
-    //sleep(1);
-
-    
-    //sleep(1);   
 }
