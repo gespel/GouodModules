@@ -8,6 +8,7 @@
 #include "StepSequencer.h"
 #include "Misc.h"
 #include "Instruments.h"
+#include "Potis.h"
 
 const int BUFSIZE = 1024;
 
@@ -28,6 +29,7 @@ float arr[8];
 Vector<float> x(arr);
 int i = 0;
 float steps = 1;
+PotiHandler ph;
 
 
 void setup() {
@@ -51,6 +53,8 @@ void setup() {
 }
 
 void loop() {
+    
+
     i++;
     if(i % 4 == 0) {
         sled->toggle();
@@ -61,25 +65,30 @@ void loop() {
           gk.trigger();
         }
         
+        
     }
     if(i % 8 == 0) {
         kick.trigger();
         gk.setType(random(2));
         steps = step->getSample();
         i = 0;
+        
     }
     
     int16_t sample;
     size_t bytes_written;
-    int input = analogRead(33);
     int x = 0;
 
     for (int i = 0; i < BUFSIZE; i++) {
+      if(i % 10 == 0) {
+        ph.handle();
+      }
       //float sample = (base->getSample() + ss->getSample() + ss2->getSample() + ss3->getSample()) / 4;
-      float sample = gk.getSample() /*+ kick.getSample()*//* + ss.getSample()*0.1*/;
+      float sample = gk.getSample() /*+ kick.getSample()*/+ ss.getSample()*0.1;
       audioBuffer[i] = sample;
-
-      ss.setFrequency(steps*55.f);
+      //Serial.println(ph.getPoti(0));
+      
+      ss.setFrequency(ph.getPoti(0)*440.f);
       //ss2->setFrequency(steps*110.f);
       //ss3->setFrequency(steps*112.f);
       step->randomTick();
