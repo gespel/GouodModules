@@ -17,8 +17,8 @@ const int bitDepth = 16; // Audio-Bit-Tiefe
 const int i2sChannel = 0; // I2S-Kanal (0 oder 1, je nach ESP32-Modell)
 float phase = 0;
 uint16_t audioBuffer[BUFSIZE];
-StatusLed *sled;
-SawtoothSynth *base;
+StatusLed sled;
+SawtoothSynth base(55, sampleRate);
 SawtoothSynth ss(110, sampleRate);
 //SawtoothSynth *ss2;
 //SawtoothSynth *ss3;
@@ -33,7 +33,6 @@ PotiHandler ph;
 
 
 void setup() {
-    sled = new StatusLed();
     x.push_back(1.0);
     x.push_back(2.0);
     x.push_back(3.0);
@@ -42,7 +41,6 @@ void setup() {
     
     step = new StepSequencer(sampleRate, x);
     step->setSpeed(0.5);
-    base = new SawtoothSynth(54.0f, sampleRate);
     //ss2 = new SawtoothSynth(110.f, sampleRate);
     //ss3 = new SawtoothSynth(110.f, sampleRate);
     Serial.begin(19200);
@@ -57,7 +55,7 @@ void loop() {
 
     i++;
     if(i % 4 == 0) {
-        sled->toggle();
+        sled.toggle();
         int rt = random(3);
         int rf = random(20);
         if(rt == 1) {
