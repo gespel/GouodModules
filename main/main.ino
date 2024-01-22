@@ -19,83 +19,77 @@ float phase = 0;
 uint16_t audioBuffer[BUFSIZE];
 StatusLed sled;
 SawtoothSynth base(55, sampleRate);
-SawtoothSynth ss(110, sampleRate);
+SawtoothSynth ss(55, sampleRate);
 //SawtoothSynth *ss2;
 //SawtoothSynth *ss3;
+float arr[2];
+Vector<float> x(arr);
 StepSequencer *step;
 GKick gk(1, 110.f, sampleRate);
 GKick kick(0, 82.5f, sampleRate);
-float arr[8];
-Vector<float> x(arr);
+
+
 int i = 0;
 float steps = 1;
 PotiHandler ph;
 
 
 void setup() {
-    x.push_back(1.0);
-    x.push_back(2.0);
-    x.push_back(3.0);
-    x.push_back(4.0);
-
-    
-    step = new StepSequencer(sampleRate, x);
-    step->setSpeed(0.5);
-    //ss2 = new SawtoothSynth(110.f, sampleRate);
-    //ss3 = new SawtoothSynth(110.f, sampleRate);
-    Serial.begin(19200);
-    pinMode(17, OUTPUT);
-    pinMode(18, INPUT);
-    // Konfigurieren Sie den I2S-Ausgang
-    setup_i2n();
+  x.push_back(1.0);
+  x.push_back(2.0);
+  step = new StepSequencer(sampleRate, x);
+  step->setSpeed(0.5);
+  //ss2 = new SawtoothSynth(110.f, sampleRate);
+  //ss3 = new SawtoothSynth(110.f, sampleRate);
+  Serial.begin(19200);
+  pinMode(17, OUTPUT);
+  pinMode(18, INPUT);
+  // Konfigurieren Sie den I2S-Ausgang
+  setup_i2n();
+  kick.setType(0);
+  gk.setType(0);    
 }
 
 void loop() {
     
+  if(i % 2 == 0) {
 
-    i++;
-    if(i % 4 == 0) {
-        sled.toggle();
-        int rt = random(3);
-        int rf = random(20);
-        if(rt == 1) {
-          gk.setFrequency(rf*110);
-          gk.trigger();
-        }
-        
-        
+  }
+  i++;
+  if(i % 4 == 0) {
+    sled.toggle();
+    int rt = random(3);
+    int rf = random(10);
+    if(rt == 1) {
+      gk.setFrequency(rf*110);
+      gk.trigger();
     }
-    if(i % 8 == 0) {
-        kick.trigger();
-        gk.setType(random(2));
-        steps = step->getSample();
-        
-    }
-    if(i % 16 == 0) {
-      i = 0;
-      ph.printDebug();
+  }
+  if(i % 8 == 0) {
+    step->doStep();
+    ss.setFrequency(step->getSample()*55.f);
+    kick.trigger();   
+  }
+  if(i % 16 == 0) {
+    i = 0;
+    //ph.printDebug();
+  }
+  
+  int16_t sample;
+  size_t bytes_written;
+  int x = 0;
 
-    }
+  for (int i = 0; i < BUFSIZE; i++) {
+    float sample = gk.getSample() + kick.getSample() + ss.getSample()*0.1;
+    audioBuffer[i] = sample;
+    //Serial.println(ph.getPoti(0));
     
-    int16_t sample;
-    size_t bytes_written;
-    int x = 0;
-
-    for (int i = 0; i < BUFSIZE; i++) {
-      if(i % 10 == 0) {
-        ph.handle();
-      }
-      //float sample = (base->getSample() + ss->getSample() + ss2->getSample() + ss3->getSample()) / 4;
-      float sample = gk.getSample() /*+ kick.getSample()*/+ ss.getSample()*0.1;
-      audioBuffer[i] = sample;
-      //Serial.println(ph.getPoti(0));
-      
-      ss.setFrequency(ph.getPoti(0)*440.f);
-      //ss2->setFrequency(steps*110.f);
-      //ss3->setFrequency(steps*112.f);
-      step->randomTick();
-      
-    }
     
-    i2s_write((i2s_port_t)i2sChannel, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);
+    //ss2->setFrequency(steps*110.f);
+    //ss3->setFrequency(steps*112.f);
+    //step.randomTick();
+    
+  }
+  
+  i2s_write((i2s_port_t)i2sChannel, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);
 }
