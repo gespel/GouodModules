@@ -82,11 +82,7 @@ void loop() {
   for (int i = 0; i < BUFSIZE; i++) {
     float sample = gk.getSample() + kick.getSample() + ss.getSample()*0.1;
     audioBuffer[i] = sample;
-    //Serial.println(ph.getPoti(0));
-    
-    
-    //ss2->setFrequency(steps*110.f);
-    //ss3->setFrequency(steps*112.f);
+
     //step.randomTick();
     
   }
