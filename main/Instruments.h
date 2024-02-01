@@ -83,3 +83,51 @@ void GKick::setFrequency(float freq) {
 void GKick::setType(int type) {
     this->type = type;
 }
+
+class FatPad {
+    public:
+        FatPad(double freq, double sampleRate);
+        void setFreq(double freq);
+        void setVoiceFreq(int voiceNr, double freq);
+        double getSample();
+
+    private:
+        SawtoothSynth *v1;
+        SawtoothSynth *v2;
+        SawtoothSynth *v3;
+        double sampleRate;
+        double freq[3] = {55.0, 55.0, 55.0};
+        void updateVoices();
+};
+
+FatPad::FatPad(double freq, double sampleRate) {
+    this->v1 = new SawtoothSynth(freq, sampleRate);
+    this->v2 = new SawtoothSynth(freq, sampleRate);
+    this->v3 = new SawtoothSynth(freq, sampleRate);
+    this->freq[0] = freq;
+    this->freq[1] = freq;
+    this->freq[2] = freq;
+    this->sampleRate = sampleRate;
+}
+
+double FatPad::getSample() {
+    return (this->v1->getSample() + this->v2->getSample() + this->v3->getSample()) / 3;
+}
+
+void FatPad::updateVoices() {
+    this->v1->setFrequency(this->freq[0]);
+    this->v2->setFrequency(this->freq[1]);
+    this->v3->setFrequency(this->freq[2]);
+}
+
+void FatPad::setFreq(double freq) {
+    this->freq[0] = freq;
+    this->freq[1] = freq;
+    this->freq[2] = freq;
+    this->updateVoices();
+}
+
+void FatPad::setVoiceFreq(int voiceNr, double freq) {
+    this->freq[voiceNr] = freq;
+    this->updateVoices();
+}
