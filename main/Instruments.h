@@ -131,3 +131,51 @@ void FatPad::setVoiceFreq(int voiceNr, double freq) {
     this->freq[voiceNr] = freq;
     this->updateVoices();
 }
+
+class StrangeFM {
+    public:
+        StrangeFM(double freq, double sampleRate);
+        double getSample();
+        void setBaseFreq(double freq);
+        void setModulatorFreq(double freq);
+    private:
+        SineSynth *base;
+        SineSynth *modulator;
+        double baseFreq;
+        double modulatorFreq;
+        double sampleRate;
+        int counter = 0;
+};
+
+StrangeFM::StrangeFM(double freq, double sampleRate) {
+    this->baseFreq = freq;
+    this->modulatorFreq = freq;
+    this->sampleRate = sampleRate;
+    this->base = new SineSynth(this->baseFreq, this->sampleRate);
+    this->modulator = new SineSynth(this->modulatorFreq, this->sampleRate);
+}
+
+double StrangeFM::getSample() {
+    counter++;
+    double out = base->getSample();
+    if(counter >= 256) {
+        base->setFrequency(this->baseFreq * modulator->getSample() / 5000);
+        counter = 0;
+    }
+    
+
+    return out;
+}
+
+void StrangeFM::setBaseFreq(double freq) {
+    this->baseFreq = freq;
+    this->base->setFrequency(this->baseFreq);
+}
+
+void StrangeFM::setModulatorFreq(double freq) {
+    this->modulatorFreq = freq;
+    this->modulator->setFrequency(this->modulatorFreq);
+}
+
+
+

@@ -10,9 +10,9 @@
 #include "Instruments.h"
 #include "Potis.h"
 
-const int BUFSIZE = 1024;
+const int BUFSIZE = 2048;
 
-const int sampleRate = 48000; // Beispielrate (Hz)
+const int sampleRate = 16000; // Beispielrate (Hz)
 const int bitDepth = 16; // Audio-Bit-Tiefe
 const int i2sChannel = 0; // I2S-Kanal (0 oder 1, je nach ESP32-Modell)
 float phase = 0;
@@ -24,7 +24,8 @@ float arr[4];
 Vector<float> x(arr);
 StepSequencer *step;
 
-FatPad fp(55.0, sampleRate);
+//FatPad fp(55.0, sampleRate);
+StrangeFM sf(55.0, sampleRate);
 
 int i = 0;
 float steps = 1;
@@ -52,17 +53,20 @@ void loop() {
   }
   i += 1;
   if(i % 4 == 0) {
-
+      ph.handle();
+      sf.setBaseFreq(ph.getPoti(0) * 880);
+      sf.setModulatorFreq(ph.getPoti(1) * 10000);
   }
   if(i % 8 == 0) {
   
   }
   if(i % 16 == 0) {
     sled.toggle();
-    ph.handle();
-    fp.setVoiceFreq(0, (1 - ph.getPoti(0)) * 440);
+    
+    /*fp.setVoiceFreq(0, (1 - ph.getPoti(0)) * 440);
     fp.setVoiceFreq(1, ph.getPoti(1) * 440);
-    fp.setVoiceFreq(2, ph.getPoti(2) * 440);
+    fp.setVoiceFreq(2, ph.getPoti(2) * 440); PADSYNTH*/
+    
 
   }
 
@@ -77,7 +81,8 @@ void loop() {
   int x = 0;
 
   for (int i = 0; i < BUFSIZE; i++) {
-    float sample = fp.getSample();
+    double sample = sf.getSample();
+    //float sample = fp.getSample();
     //sample *= 0.5;
     audioBuffer[i] = sample;
     step->tick();
