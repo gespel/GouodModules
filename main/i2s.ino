@@ -1,4 +1,4 @@
-void setup_i2n() {
+  void setup_i2n() {
     i2s_config_t i2s_config = {
       .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
       .sample_rate = sampleRate,
@@ -15,7 +15,7 @@ void setup_i2n() {
     i2s_pin_config_t pin_config = {
       .bck_io_num = 26, // BCLK-Pin
       .ws_io_num = 25, // LRCLK-Pin
-      .data_out_num = 22, // Daten-Ausgangspins
+      .data_out_num = 18, // Daten-Ausgangspins
       .data_in_num = I2S_PIN_NO_CHANGE, // Daten-Eingangspins (kein Eingang)
     };
 
