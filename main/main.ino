@@ -13,6 +13,7 @@
 
 
 PotiHandler ph;
+SemaphoreHandle_t semaphore;
 
 
 const int BUFSIZE = 2048;
@@ -27,11 +28,23 @@ TaskHandle_t audiotask;
 
 int i = 0;
 
+int sharedInteger = 0;
+
 void osTask(void * pvParameters) {
     GIOS g("1.0");
     StatusLed sled;
     while(1) {
+        //g.printMainMenu();
         sled.toggle();
+
+        if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
+            // Erhöhen des Integer-Werts
+            sharedInteger++;
+            Serial.println("Added!");
+            // Freigeben der Semaphore, damit andere Tasks darauf zugreifen können
+            xSemaphoreGive(semaphore);
+        }
+
         delay(200);
     }
     
@@ -62,6 +75,15 @@ void audioTask(void * pvParameters) {
         }
         
         i2s_write((i2s_port_t)i2sChannel, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);
+
+
+        if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
+            // Verringern des Integer-Werts
+            sharedInteger--;
+            Serial.println("Subtracted!");
+            // Freigeben der Semaphore, damit andere Tasks darauf zugreifen können
+            xSemaphoreGive(semaphore);
+        }
     }
     
 }
@@ -73,7 +95,7 @@ void setup() {
     pinMode(18, INPUT);
     
 
-
+    semaphore = xSemaphoreCreateMutex();
     xTaskCreatePinnedToCore(
         osTask,
         "gios",
@@ -95,7 +117,7 @@ void setup() {
         0
     );
     delay(500);           
-    
+    //vTaskStartScheduler();
 }
 
 
