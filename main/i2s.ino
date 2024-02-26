@@ -1,4 +1,5 @@
-  void setup_i2n() {
+
+void setup_i2n(int sampleRate, int bitDepth, int i2sChannel) {
     i2s_config_t i2s_config = {
       .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
       .sample_rate = sampleRate,
