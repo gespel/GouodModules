@@ -12,14 +12,11 @@
 #include "gios.h"
 
 
-PotiHandler ph;
 SemaphoreHandle_t semaphore;
 
 
 const int BUFSIZE = 2048;
-const int sampleRate = 16000; // Beispielrate (Hz)
-const int bitDepth = 16; // Audio-Bit-Tiefe
-const int i2sChannel = 0; // I2S-Kanal (0 oder 1, je nach ESP32-Modell)
+
 float phase = 0;
 uint16_t audioBuffer[BUFSIZE];
 
@@ -32,27 +29,62 @@ int sharedInteger = 0;
 
 void osTask(void * pvParameters) {
     GIOS g("1.0");
+    delay(1000);
     StatusLed sled;
-    while(1) {
-        //g.printMainMenu();
-        sled.toggle();
+    g.println(2, "Loaded StatusLED...");
+    delay(700);
+    PotiHandler ph;
+    ph.handle();
+    g.println(3, "Loaded PotiHandler...");
+    
+    int prev_poti1 = ph.getPotiThird(0);
+    bool select_pot = ph.getPotiButton(1);
 
-        if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
-            // Erhöhen des Integer-Werts
-            sharedInteger++;
-            Serial.println("Added!");
-            // Freigeben der Semaphore, damit andere Tasks darauf zugreifen können
-            xSemaphoreGive(semaphore);
+    delay(700);
+    g.currentDisplay = MAIN;
+    g.printMainMenu(0);
+
+    while(1) {
+        if(g.currentDisplay == MAIN) {
+            if(prev_poti1 != ph.getPotiThird(0)) {
+                g.menuChanged();
+                g.printMainMenu(ph.getPotiThird(0));
+                prev_poti1 = ph.getPotiThird(0);
+            }
+            if(ph.getPotiButton(1)) {
+                if(ph.getPotiThird(0) == 2) {
+                    g.printSettings();
+                }
+            }
         }
 
-        delay(200);
+        if(g.currentDisplay == SETTINGS) {
+            if(!ph.getPotiButton(1)) {
+                g.menuChanged();
+                g.printMainMenu(ph.getPotiThird(0));
+                prev_poti1 = ph.getPotiThird(0);
+            }
+        }
+        
+        Serial.println(g.currentDisplay);
+        sled.toggle();
+
+        /*if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
+            sharedInteger++;
+            Serial.println("Added!");
+            xSemaphoreGive(semaphore);
+        }*/
+        ph.handle();
+        delay(50);
     }
     
     
 }
 
 void audioTask(void * pvParameters) {
-    setup_i2n(sampleRate, bitDepth, i2sChannel);
+    int sampleRate = 16000;
+
+    setup_i2n(sampleRate, 16, 0);
     SawtoothSynth ss(110.0, sampleRate);
 
     while(1) {
@@ -74,16 +106,16 @@ void audioTask(void * pvParameters) {
             
         }
         
-        i2s_write((i2s_port_t)i2sChannel, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);
+        i2s_write((i2s_port_t)0, audioBuffer, sizeof(audioBuffer), &bytes_written, portMAX_DELAY);
 
 
-        if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
+        /*if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
             // Verringern des Integer-Werts
             sharedInteger--;
             Serial.println("Subtracted!");
             // Freigeben der Semaphore, damit andere Tasks darauf zugreifen können
             xSemaphoreGive(semaphore);
-        }
+        }*/
     }
     
 }
@@ -117,7 +149,6 @@ void setup() {
         0
     );
     delay(500);           
-    //vTaskStartScheduler();
 }
 
 
