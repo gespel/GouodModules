@@ -66,3 +66,18 @@ void PotiHandler::printDebug() {
     Serial.println(this->getPoti(2)); 
 }
 
+class ButtonHandler {
+    public:
+        ButtonHandler();
+        bool getButtonPressed(int buttonnr);
+    private:
+};
+
+ButtonHandler::ButtonHandler() {
+
+}
+
+bool ButtonHandler::getButtonPressed(int buttonnr) {
+    
+}
+

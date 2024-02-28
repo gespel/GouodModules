@@ -5,10 +5,10 @@
 #include <driver/i2s.h>
 #include <math.h>
 #include "synths.h"
-#include "StepSequencer.h"
-#include "Misc.h"
-#include "Instruments.h"
-#include "Potis.h"
+#include "stepsequencer.h"
+#include "misc.h"
+#include "instruments.h"
+#include "handler.h"
 #include "gios.h"
 
 

@@ -98,7 +98,7 @@ void GIOS::printSettings() {
     this->oled->setCursor(0, 1);
     this->oled->print("Sten Heimbrodt");
     this->oled->setCursor(0, 2);
-    this->oled->print("Gouod Labs");
+    this->oled->print("part of Gouod Labs");
     this->oled->update();
     this->changedMenu = true;
 }
