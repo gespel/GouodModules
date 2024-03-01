@@ -71,6 +71,8 @@ class ButtonHandler {
         ButtonHandler();
         bool getButtonPressed(int buttonnr);
     private:
+        bool onestatus = false;
+        bool twostatus = false;
 };
 
 ButtonHandler::ButtonHandler() {
@@ -78,6 +80,39 @@ ButtonHandler::ButtonHandler() {
 }
 
 bool ButtonHandler::getButtonPressed(int buttonnr) {
-    
+    if(buttonnr == 0) {
+        if(analogRead(35) > 4000) {
+            if(onestatus == false) {
+                Serial.println("1 Pressed!");
+                onestatus = true;
+                return true;
+            }
+            
+        }
+        else {
+            if(onestatus == true) {
+                onestatus = false;
+                Serial.println("1 Released!");
+            }
+
+        }
+    }
+    if(buttonnr == 1) {
+        if(analogRead(32) > 4000) {
+            if(twostatus == false) {
+                Serial.println("2 Pressed!");
+                twostatus = true;
+                return true;
+            }
+            
+        }
+        else {
+            if(twostatus == true) {
+                twostatus = false;
+                Serial.println("2 Released!");
+            }
+        }
+    }
+    return false;
 }
 

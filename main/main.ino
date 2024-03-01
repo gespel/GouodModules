@@ -34,6 +34,7 @@ void osTask(void * pvParameters) {
     g.println(2, "Loaded StatusLED...");
     delay(700);
     PotiHandler ph;
+    ButtonHandler bh;
     ph.handle();
     g.println(3, "Loaded PotiHandler...");
     
@@ -45,6 +46,8 @@ void osTask(void * pvParameters) {
     g.printMainMenu(0);
 
     while(1) {
+        bh.getButtonPressed(0);
+        bh.getButtonPressed(1);
         if(g.currentDisplay == MAIN) {
             if(prev_poti1 != ph.getPotiThird(0)) {
                 g.menuChanged();
@@ -66,7 +69,7 @@ void osTask(void * pvParameters) {
             }
         }
         
-        Serial.println(g.currentDisplay);
+        //Serial.println(g.currentDisplay);
         sled.toggle();
 
         /*if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
@@ -122,7 +125,8 @@ void setup() {
     pinMode(17, OUTPUT);
     pinMode(16, OUTPUT);
     pinMode(18, INPUT);
-    
+    pinMode(35, INPUT);
+    pinMode(32, INPUT);
 
     semaphore = xSemaphoreCreateMutex();
     xTaskCreatePinnedToCore(
