@@ -15,12 +15,12 @@ StatusLed::StatusLed() {
 void StatusLed::toggle() {
     if(state == 0) {
         state = 1;
-        digitalWrite(17, HIGH);
+        digitalWrite(16, HIGH);
         //15
     }
     else {
         state = 0;
-        digitalWrite(17, LOW);
+        digitalWrite(16, LOW);
     }
 }
 

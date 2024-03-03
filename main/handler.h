@@ -81,7 +81,7 @@ ButtonHandler::ButtonHandler() {
 
 bool ButtonHandler::getButtonPressed(int buttonnr) {
     if(buttonnr == 0) {
-        if(analogRead(35) > 4000) {
+        if(digitalRead(35) == HIGH) {
             if(onestatus == false) {
                 Serial.println("1 Pressed!");
                 onestatus = true;
@@ -98,7 +98,7 @@ bool ButtonHandler::getButtonPressed(int buttonnr) {
         }
     }
     if(buttonnr == 1) {
-        if(analogRead(32) > 4000) {
+        if(digitalRead(34) == HIGH) {
             if(twostatus == false) {
                 Serial.println("2 Pressed!");
                 twostatus = true;
