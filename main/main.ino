@@ -46,15 +46,13 @@ void osTask(void * pvParameters) {
     g.printMainMenu(0);
 
     while(1) {
-        bh.getButtonPressed(0);
-        bh.getButtonPressed(1);
         if(g.currentDisplay == MAIN) {
             if(prev_poti1 != ph.getPotiThird(0)) {
                 g.menuChanged();
                 g.printMainMenu(ph.getPotiThird(0));
                 prev_poti1 = ph.getPotiThird(0);
             }
-            if(ph.getPotiButton(1)) {
+            if(bh.getButtonPressed(1)) {
                 if(ph.getPotiThird(0) == 2) {
                     g.printSettings();
                 }
@@ -62,7 +60,7 @@ void osTask(void * pvParameters) {
         }
 
         if(g.currentDisplay == SETTINGS) {
-            if(!ph.getPotiButton(1)) {
+            if(bh.getButtonPressed(0)) {
                 g.menuChanged();
                 g.printMainMenu(ph.getPotiThird(0));
                 prev_poti1 = ph.getPotiThird(0);
