@@ -53,6 +53,9 @@ void osTask(void * pvParameters) {
                 prev_poti1 = ph.getPotiThird(0);
             }
             if(bh.getButtonPressed(1)) {
+                if(ph.getPotiThird(0) == 0) {
+                    g.printSynthMenu();
+                }
                 if(ph.getPotiThird(0) == 2) {
                     g.printSettings();
                 }
@@ -60,6 +63,14 @@ void osTask(void * pvParameters) {
         }
 
         if(g.currentDisplay == SETTINGS) {
+            if(bh.getButtonPressed(0)) {
+                g.menuChanged();
+                g.printMainMenu(ph.getPotiThird(0));
+                prev_poti1 = ph.getPotiThird(0);
+            }
+        }
+
+        if(g.currentDisplay == SYNTH) {
             if(bh.getButtonPressed(0)) {
                 g.menuChanged();
                 g.printMainMenu(ph.getPotiThird(0));

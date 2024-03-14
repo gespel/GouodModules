@@ -10,8 +10,10 @@ typedef enum displayMenu {
 class GIOS {
     public:
         GIOS(String version);
+        void menuLoop(ButtonHandler *bh, PotiHandler *ph);
         void printMainMenu(int selected);
         void printSettings();
+        void printSynthMenu();
         void println(int line, String text);
         void menuChanged();
         void clear();
@@ -34,6 +36,10 @@ GIOS::GIOS(String version) {
     this->oled->setCursor(0, 7);
     this->oled->print("Thats the spirit!");
     this->oled->update(); 
+}
+
+void menuLoop(ButtonHandler *bh, PotiHandler *ph) {
+    
 }
 
 void GIOS::clear() {
@@ -99,6 +105,17 @@ void GIOS::printSettings() {
     this->oled->print("Sten Heimbrodt");
     this->oled->setCursor(0, 2);
     this->oled->print("part of Gouod Labs");
+    this->oled->update();
+    this->changedMenu = true;
+}
+
+void GIOS::printSynthMenu() {
+    this->currentDisplay = SYNTH;
+    this->oled->clear();
+    this->println(0, "OSC Type Select:");
+    this->println(1, "");
+
+
     this->oled->update();
     this->changedMenu = true;
 }
