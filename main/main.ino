@@ -4,12 +4,12 @@
 #include <Arduino.h>
 #include <driver/i2s.h>
 #include <math.h>
-#include "synths.h"
-#include "stepsequencer.h"
-#include "misc.h"
-#include "instruments.h"
-#include "handler.h"
-#include "gios.h"
+#include "GouodModulesLib/synths.h"
+#include "GouodModulesLib/stepsequencer.h"
+#include "GouodModulesLib/misc.h"
+#include "GouodModulesLib/instruments.h"
+#include "GouodModulesLib/handler.h"
+#include "GouodModulesLib/gios.h"
 
 
 SemaphoreHandle_t semaphore;
