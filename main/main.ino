@@ -94,7 +94,7 @@ void osTask(void * pvParameters) {
 }
 
 void audioTask(void * pvParameters) {
-    int sampleRate = 16000;
+    int sampleRate = 48000;
 
     setup_i2n(sampleRate, 16, 0);
     SawtoothSynth ss(110.0, sampleRate);
