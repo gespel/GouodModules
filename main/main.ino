@@ -28,69 +28,12 @@ int i = 0;
 int sharedInteger = 0;
 
 void osTask(void * pvParameters) {
-    GIOS g("1.0");
-    delay(1000);
     StatusLed sled;
-    g.println(2, "Loaded StatusLED...");
-    delay(700);
-    PotiHandler ph;
-    ButtonHandler bh;
-    ph.handle();
-    g.println(3, "Loaded PotiHandler...");
-    
-    int prev_poti1 = ph.getPotiThird(0);
-    bool select_pot = ph.getPotiButton(1);
-
-    delay(700);
-    g.currentDisplay = MAIN;
-    g.printMainMenu(0);
 
     while(1) {
-        if(g.currentDisplay == MAIN) {
-            if(prev_poti1 != ph.getPotiThird(0)) {
-                g.menuChanged();
-                g.printMainMenu(ph.getPotiThird(0));
-                prev_poti1 = ph.getPotiThird(0);
-            }
-            if(bh.getButtonPressed(1)) {
-                if(ph.getPotiThird(0) == 0) {
-                    g.printSynthMenu();
-                }
-                if(ph.getPotiThird(0) == 2) {
-                    g.printSettings();
-                }
-            }
-        }
-
-        if(g.currentDisplay == SETTINGS) {
-            if(bh.getButtonPressed(0)) {
-                g.menuChanged();
-                g.printMainMenu(ph.getPotiThird(0));
-                prev_poti1 = ph.getPotiThird(0);
-            }
-        }
-
-        if(g.currentDisplay == SYNTH) {
-            if(bh.getButtonPressed(0)) {
-                g.menuChanged();
-                g.printMainMenu(ph.getPotiThird(0));
-                prev_poti1 = ph.getPotiThird(0);
-            }
-        }
-        
-        //Serial.println(g.currentDisplay);
         sled.toggle();
-
-        /*if (xSemaphoreTake(semaphore, ( TickType_t ) 100) == pdTRUE) {
-            sharedInteger++;
-            Serial.println("Added!");
-            xSemaphoreGive(semaphore);
-        }*/
-        ph.handle();
-        delay(50);
+        delay(200);
     }
-    
-    
 }
 
 void audioTask(void * pvParameters) {
