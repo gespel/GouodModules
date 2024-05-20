@@ -41,6 +41,7 @@ void audioTask(void * pvParameters) {
 
     setup_i2n(sampleRate, 16, 0);
     SawtoothSynth ss(110.0, sampleRate);
+    SawtoothSynth ss2(55.0, sampleRate);
 
     while(1) {
         int16_t sample;
@@ -49,7 +50,7 @@ void audioTask(void * pvParameters) {
 
         for (int i = 0; i < BUFSIZE; i++) {
             //double sample = sf.getSample();
-            double sample = ss.getSample() * 5;
+            double sample = (ss2.getSample() + ss.getSample()) * 5;
             //fp.setFreq(step->getSample()*55*ph.getPoti(0));
             //sample *= 0.5;
             audioBuffer[i] = sample;
