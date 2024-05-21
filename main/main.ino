@@ -78,8 +78,9 @@ void setup() {
     pinMode(17, OUTPUT);
     pinMode(16, OUTPUT);
     pinMode(18, INPUT);
-    pinMode(35, INPUT_PULLUP);
-    pinMode(34, INPUT_PULLUP);
+    pinMode(35, INPUT);
+    pinMode(34, INPUT);
+    pinMode(32, INPUT);
 
     semaphore = xSemaphoreCreateMutex();
     xTaskCreatePinnedToCore(
