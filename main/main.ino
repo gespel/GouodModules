@@ -76,11 +76,13 @@ void audioTask(void * pvParameters) {
 void setup() {
     Serial.begin(19200);
     pinMode(17, OUTPUT);
+    pinMode(12, OUTPUT);
+    pinMode(14, OUTPUT);
     pinMode(16, OUTPUT);
-    pinMode(18, INPUT);
-    pinMode(35, INPUT);
-    pinMode(34, INPUT);
-    pinMode(32, INPUT);
+    pinMode(18, OUTPUT);
+    pinMode(34, OUTPUT);
+    pinMode(32, OUTPUT);
+    pinMode(33, OUTPUT);
 
     semaphore = xSemaphoreCreateMutex();
     xTaskCreatePinnedToCore(
