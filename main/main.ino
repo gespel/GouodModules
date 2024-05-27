@@ -49,10 +49,8 @@ void audioTask(void * pvParameters) {
         int x = 0;
 
         for (int i = 0; i < BUFSIZE; i++) {
-            //double sample = sf.getSample();
             double sample = (ss2.getSample() + ss.getSample()) * 5;
-            //fp.setFreq(step->getSample()*55*ph.getPoti(0));
-            //sample *= 0.5;
+
             audioBuffer[i] = sample;
 
             
